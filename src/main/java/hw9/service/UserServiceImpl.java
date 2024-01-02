@@ -1,71 +1,66 @@
 package hw9.service;
 
-import hw9.domain.Users;
+import hw9.domain.Users.Users;
+import hw9.domain.Users.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import hw9.repository.UserRepository;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService{
-    private UserRepository repository = new UserRepository();
+
+    private final UsersRepository repository;
+
+    @Autowired
+    public UserServiceImpl(UsersRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Users CreateUsers(Users newUser){
-        Users resUsers = new Users();
-        try {
-            resUsers = repository.CreateUsers(newUser);
-        }catch (SQLException e){
-            log.error("service.CreateUsers error={}", e); // Exception 발생 시 로그
-        }
-        return resUsers;
+
+        repository.save(Users.builder()
+                .UserId(newUser.getUser_id())
+                .UserPw(newUser.getUser_pw())
+                .UserName(newUser.getUser_name()).build());
+
+        return newUser;
+    }
+
+    @Override
+    public List<Users> findAllUsers(){
+
+        return repository.findAll();
+
     };
 
     @Override
-    public ArrayList<Users> findAllUsers(){
-        ArrayList<Users> resUsers = new ArrayList<>();
-        try{
-            resUsers = repository.findAllUsers();
-        }catch(SQLException e){
-            log.error("service.findAllUsers error = {}", e);
-        }
-        return resUsers;
+    public Users findUsers(Integer id){
+
+        return repository.findById(id).orElse(new Users(null, null, null));
+
     };
 
     @Override
-    public Users findUsers(String id){
-        Users resUsers = new Users();
-        try {
-            resUsers = repository.findUsers(id);
-        }catch (SQLException e){
-            log.error("service.findUsers error={}", e); // Exception 발생 시 로그
-        }
-        return resUsers;
+    public void DeleteUsers(Integer id){
+
+        repository.deleteById(id);
+
     };
 
     @Override
-    public int DeleteUsers(String id){
-        int resUsers = 0;
-        try {
-            resUsers = repository.DeleteUser(id);
-        }catch (SQLException e){
-            log.error("service.DeleteUser error={}", e); // Exception 발생 시 로그
-        }
-        return resUsers;
-    };
+    public Users UpdateUsers(Users TargetUser){
 
-    @Override
-    public Users UpdateUsers(String id, Users TargetUser){
-        Users resUsers = new Users();
-        try {
-            resUsers = repository.UpdateUser(id, TargetUser);
-        }catch (SQLException e){
-            log.error("service.DeleteUser error={}", e); // Exception 발생 시 로그
-        }
-        return resUsers;
+        repository.save(Users.builder()
+                .UserName(TargetUser.getUser_name())
+                .UserId(TargetUser.getUser_id())
+                .UserPw(TargetUser.getUser_pw())
+                .build());
+
+        return TargetUser;
     };
 
 
