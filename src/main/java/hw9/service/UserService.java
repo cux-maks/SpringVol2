@@ -1,13 +1,13 @@
 package hw9.service;
 
-import hw9.domain.Users;
+import hw9.domain.Users.Users;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface UserService {
     public Users CreateUsers(Users newUser);
-    public ArrayList<Users> findAllUsers();
-    public Users findUsers(String id);
-    public int DeleteUsers(String id);
-    public Users UpdateUsers(String id, Users TargetUser);
+    public List<Users> findAllUsers();
+    public Users findUsers(Integer id);
+    public void DeleteUsers(Integer id);
+    public Users UpdateUsers(Users TargetUser);
 }
