@@ -19,7 +19,7 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private String user_id;
 
     @Column(columnDefinition = "varchar", length = 32)
     private String user_pw;
