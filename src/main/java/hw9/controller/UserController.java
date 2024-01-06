@@ -40,12 +40,12 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Users FindUsers(@PathVariable(name = "id") String id){
-        return service.findUsers(Integer.valueOf(id));
+        return service.findUsers(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void DeleteUsers(@PathVariable(name = "id") String id){
-        service.DeleteUsers(Integer.valueOf(id));
+        service.DeleteUsers(id);
     }
 }
