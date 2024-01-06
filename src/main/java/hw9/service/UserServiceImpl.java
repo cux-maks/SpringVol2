@@ -23,9 +23,9 @@ public class UserServiceImpl implements UserService{
     public Users CreateUsers(Users newUser){
 
         repository.save(Users.builder()
-                .UserId(newUser.getUser_id())
-                .UserPw(newUser.getUser_pw())
-                .UserName(newUser.getUser_name()).build());
+                .user_id(newUser.getUser_id())
+                .user_pw(newUser.getUser_pw())
+                .user_name(newUser.getUser_name()).build());
 
         return newUser;
     }
@@ -38,16 +38,16 @@ public class UserServiceImpl implements UserService{
     };
 
     @Override
-    public Users findUsers(Integer id){
+    public Users findUsers(String id){
 
-        return repository.findById(id).orElse(new Users(null, null, null));
+        return repository.findByUserId(id).orElse(new Users(null, null, null, null, null));
 
     };
 
     @Override
-    public void DeleteUsers(Integer id){
+    public void DeleteUsers(String id){
 
-        repository.deleteById(id);
+        repository.deleteByUser_id(id);
 
     };
 
@@ -55,9 +55,9 @@ public class UserServiceImpl implements UserService{
     public Users UpdateUsers(Users TargetUser){
 
         repository.save(Users.builder()
-                .UserName(TargetUser.getUser_name())
-                .UserId(TargetUser.getUser_id())
-                .UserPw(TargetUser.getUser_pw())
+                .user_name(TargetUser.getUser_name())
+                .user_id(TargetUser.getUser_id())
+                .user_pw(TargetUser.getUser_pw())
                 .build());
 
         return TargetUser;
