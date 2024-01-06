@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
@@ -57,7 +59,7 @@ public class JwtProvider {
     }
 
     public String getAccount(String token){
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJwt(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public String resolveToken(HttpServletRequest request){
@@ -67,6 +69,7 @@ public class JwtProvider {
     public boolean validateToken(String token){
         try {
             if (!token.substring(0, "BEARER ".length()).equalsIgnoreCase("BEARER ")) {
+                log.info("인증 오류 1");
                 return false;
             } else {
                 token = token.split(" ")[1].trim();
@@ -75,6 +78,7 @@ public class JwtProvider {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e){
+            log.info("인증 오류 2");
             return false;
         }
     }

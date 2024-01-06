@@ -25,7 +25,7 @@ public class SignServiceImpl implements SignService{
 
     @Override
     public SignResponse login(SignRequest request) throws Exception{
-        Users user = usersRepository.findById(request.getId()).orElseThrow(() ->
+        Users user = usersRepository.findByUserId(request.getId()).orElseThrow(() ->
                 new BadCredentialsException("잘못된 계정정보 입니다."));
         if(!passwordEncoder.matches(request.getPassword(), user.getUser_pw())){
             throw new BadCredentialsException("잘못된 계정정보 입니다.");
@@ -35,7 +35,7 @@ public class SignServiceImpl implements SignService{
                 .id(user.getUser_id())
                 .name(user.getUser_name())
                 .roles(user.getRoles())
-                .token((jwtProvider.createToken(user.getUser_id(), user.getRoles())))
+                .token(jwtProvider.createToken(user.getUser_id(), user.getRoles()))
                 .build();
     }
 
@@ -47,7 +47,7 @@ public class SignServiceImpl implements SignService{
                     .user_name(request.getName())
                     .build();
 
-            user.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
+            user.setRoles(Collections.singletonList(Authority.builder().name("ROLE_User").build()));
 
             usersRepository.save(user);
         } catch (Exception e) {
@@ -59,7 +59,7 @@ public class SignServiceImpl implements SignService{
 
     @Override
     public SignResponse getUser(String id) throws Exception {
-        Users user = usersRepository.findById(id)
+        Users user = usersRepository.findByUserId(id)
                 .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
         return new SignResponse(user);
     }

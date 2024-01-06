@@ -40,14 +40,14 @@ public class UserServiceImpl implements UserService{
     @Override
     public Users findUsers(String id){
 
-        return repository.findById(id).orElse(new Users(null, null, null, null));
+        return repository.findByUserId(id).orElse(new Users(null, null, null, null, null));
 
     };
 
     @Override
     public void DeleteUsers(String id){
 
-        repository.deleteById(id);
+        repository.deleteByUser_id(id);
 
     };
 

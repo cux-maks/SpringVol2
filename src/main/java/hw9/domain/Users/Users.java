@@ -19,12 +19,15 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
     private String user_id;
 
-    @Column(columnDefinition = "varchar", length = 32)
+    @Column(columnDefinition = "varchar", length = 255)
     private String user_pw;
 
-    @Column(columnDefinition = "varchar", length = 16)
+    @Column(columnDefinition = "varchar", length = 255)
     private String user_name;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
