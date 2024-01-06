@@ -1,5 +1,6 @@
 package hw9.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -46,32 +47,36 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/sign/login").permitAll()
                                 .requestMatchers("/sign/register").permitAll()
-                                .requestMatchers("/users").hasRole("User")
-                                .requestMatchers("/sign/admin").hasRole("Admin")
+                                .requestMatchers("/users").hasAnyRole("User", "Admin")
+                                .requestMatchers("/admin").hasRole("Admin")
                                 .anyRequest().denyAll()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((config) ->
-                        config.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
+                        config.accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(unauthorizedEntryPoint())
                 );
         return http.build();
     }
 
-    private final AuthenticationEntryPoint unauthorizedEntryPoint =
-            (request, response, authException) -> {
-                response.setStatus(403);
-                response.setCharacterEncoding("utf-8");
-                response.setContentType("text/html; charset=UTF-8");
-                response.getWriter().write("권한이 없는 사용자 입니다.");
-            };
+    @Bean
+    public AuthenticationEntryPoint unauthorizedEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().write("인증되지 않은 요청입니다.");
+        };
+    }
 
-    private final AccessDeniedHandler accessDeniedHandler =
-            (request, response, accessDeniedException) -> {
-                response.setStatus(401);
-                response.setCharacterEncoding("utf-8");
-                response.setContentType("text/html; charset=UTF-8");
-                response.getWriter().write("인증되지 않은 사용자 입니다.");
-            };
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 상태 코드
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().write("권한이 없는 요청입니다.");
+        };
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
